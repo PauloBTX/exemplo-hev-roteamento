@@ -175,14 +175,32 @@ Executa um teste em lote de **1000 requisições** contra o Jev sorteando exempl
 
 ```text
 .
-├── .env                  # Chave da API e configurações locais
-├── .env.example          # Modelo de variáveis de ambiente
-├── .gitignore            # Ignora node_modules e .env
-├── package.json          # Dependências mínimas (Express, dotenv)
-├── README.md             # Instruções de uso e documentação
+├── .env                         # Chave da API e configurações locais
+├── .env.example                 # Modelo de variáveis de ambiente
+├── .gitignore                   # Ignora node_modules e .env
+├── package.json                 # Dependências mínimas (Express, dotenv)
+├── README.md                    # Instruções de uso e documentação
+├── flowchart.html               # 📊 Diagrama interativo de arquitetura gerado com Archify
+├── flowchart.architecture.json  # Especificação da arquitetura Archify
 └── src/
-    ├── incidents.js      # Catálogo de incidentes pré-definidos para simulação
-    ├── index.js          # Servidor Express, rotas e logs formatados
-    ├── jev.js            # Integração com a Decisions API do OpenRouter (~typesafe/jev-latest)
-    └── router.js         # Função routeIncident() com os TODOs para Microsoft Teams
+    ├── benchmark.js             # Módulo de benchmark (1.000 requisições concorrentes)
+    ├── cli-benchmark.js         # Script CLI para rodar o benchmark via terminal
+    ├── incidents.js             # Catálogo de incidentes pré-definidos para simulação
+    ├── index.js                 # Servidor Express, rotas e logs formatados
+    ├── jev.js                   # Integração com a Decisions API do OpenRouter (~typesafe/jev-latest)
+    └── router.js                # Função routeIncident() com os TODOs para Microsoft Teams
 ```
+
+---
+
+## 🎨 Visualização Interativa do Fluxo (Archify)
+
+O arquivo [`flowchart.html`](./flowchart.html) foi gerado utilizando a ferramenta **[Archify](https://github.com/tt-a1i/archify)** com qualidade *showcase*. Ele contém:
+
+- Pan & Zoom interativo
+- Animação de fluxo de sinal (*trace animation*)
+- Vistas selecionáveis (*Full flow*, *Decision engine*, *Dispatch teams*)
+- Alternância entre tema Escuro / Claro
+- Exportação para SVG, PNG e WebP
+- Painéis de contexto arquitetural
+
