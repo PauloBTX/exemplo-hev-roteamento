@@ -3,6 +3,7 @@ const express = require("express");
 const { classifyIncidentWithJev } = require("./jev");
 const { routeIncident } = require("./router");
 const { getIncidentByType } = require("./incidents");
+const { runJevBenchmark } = require("./benchmark");
 
 const app = express();
 app.use(express.json());
@@ -96,8 +97,32 @@ app.get("/simulate/:type", async (req, res) => {
   }
 });
 
+/**
+ * GET /benchmark
+ * Executa N requisições (padrão: 1000) contra o Jev para medir a distribuição
+ * entre os setores do routeIncident e a margem de erro.
+ * Query params opcionais: ?iterations=1000&concurrency=15
+ */
+app.get("/benchmark", async (req, res) => {
+  // Aumenta timeout do socket para suportar o lote de 1000 requisições
+  req.setTimeout(600000); // 10 minutos
+  res.setTimeout(600000);
+
+  const iterations = parseInt(req.query.iterations, 10) || 1000;
+  const concurrency = parseInt(req.query.concurrency, 10) || 15;
+
+  try {
+    const benchmarkResult = await runJevBenchmark(iterations, concurrency);
+    return res.status(200).json(benchmarkResult);
+  } catch (error) {
+    console.error(`[ERRO NO BENCHMARK] ${error.message}`);
+    return res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`⚡ Servidor de Roteamento com Jev rodando na porta ${PORT}`);
   console.log(`Endpoint de incidente: POST http://localhost:${PORT}/incident`);
-  console.log(`Simulações disponíveis: GET http://localhost:${PORT}/simulate/[backend|database|infrastructure|security|payments|random]\n`);
+  console.log(`Simulações disponíveis: GET http://localhost:${PORT}/simulate/[backend|database|infrastructure|security|payments|random]`);
+  console.log(`Benchmark / Margem de Erro: GET http://localhost:${PORT}/benchmark?iterations=1000\n`);
 });

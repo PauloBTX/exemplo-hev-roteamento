@@ -121,28 +121,52 @@ Simula incidentes reais de backend para teste rápido no navegador ou terminal:
 
 ---
 
-## 🖥️ Logs no Console
+### 3. Benchmark de 1000 Requisições e Margem de Erro (`GET /benchmark`)
 
-A cada incidente processado, o terminal exibe o fluxo de tomada de decisão:
+Executa um teste em lote de **1000 requisições** contra o Jev sorteando exemplos aleatórios. No final, exibe a distribuição exata entre os setores no `routeIncident`, a taxa de acurácia e a margem de erro.
 
-```text
-----------------------------------------
-NEW INCIDENT
+- **Via HTTP (Navegador ou cURL):**
+  ```bash
+  curl http://localhost:3000/benchmark
+  ```
+  *Parâmetros opcionais:*
+  `http://localhost:3000/benchmark?iterations=1000&concurrency=25`
 
-Service: checkout-api
-Message: Database connection pool exhausted
+- **Ou direto via CLI:**
+  ```bash
+  npm run benchmark
+  ```
 
-JEV DECISION
+**Exemplo de Resposta do Benchmark:**
 
-Team: DATABASE
-Confidence: 100%
-
-ROUTING
-
-DATABASE → TODO Microsoft Teams
-----------------------------------------
-
-Routing incident to DATABASE team
+```json
+{
+  "totalRequests": 1000,
+  "successfulRequests": 1000,
+  "failedRequests": 0,
+  "durationSeconds": 14.39,
+  "throughputRps": 69.5,
+  "routesDistribution": {
+    "BACKEND": 207,
+    "DATABASE": 191,
+    "INFRASTRUCTURE": 197,
+    "SECURITY": 195,
+    "PAYMENTS": 210
+  },
+  "metrics": {
+    "correctDecisions": 1000,
+    "incorrectDecisions": 0,
+    "accuracyPercentage": "100.00%",
+    "errorRatePercentage": "0.00%"
+  },
+  "detailsByCategory": {
+    "BACKEND": { "expectedTotal": 207, "routedToTeam": 207, "correct": 207, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "DATABASE": { "expectedTotal": 191, "routedToTeam": 191, "correct": 191, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "INFRASTRUCTURE": { "expectedTotal": 197, "routedToTeam": 197, "correct": 197, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "SECURITY": { "expectedTotal": 195, "routedToTeam": 195, "correct": 195, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "PAYMENTS": { "expectedTotal": 210, "routedToTeam": 210, "correct": 210, "incorrect": 0, "accuracyPercentage": "100.00%" }
+  }
+}
 ```
 
 ---

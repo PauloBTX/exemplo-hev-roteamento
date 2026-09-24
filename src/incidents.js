@@ -1,5 +1,6 @@
 const predefinedIncidents = {
   backend: {
+    expectedTeam: "BACKEND",
     service: "orders-api",
     environment: "production",
     statusCode: 500,
@@ -7,6 +8,7 @@ const predefinedIncidents = {
     details: "Unhandled exception in OrderController.createOrder at line 142"
   },
   database: {
+    expectedTeam: "DATABASE",
     service: "checkout-api",
     environment: "production",
     statusCode: 500,
@@ -14,6 +16,7 @@ const predefinedIncidents = {
     details: "PostgreSQL pool limit reached (max_connections=100)"
   },
   infrastructure: {
+    expectedTeam: "INFRASTRUCTURE",
     service: "worker-service",
     environment: "production",
     statusCode: 503,
@@ -21,6 +24,7 @@ const predefinedIncidents = {
     details: "Kubernetes pod evicted: OOMKilled with exit code 137"
   },
   security: {
+    expectedTeam: "SECURITY",
     service: "auth-service",
     environment: "production",
     statusCode: 401,
@@ -28,6 +32,7 @@ const predefinedIncidents = {
     details: "Over 500 failed JWT verifications in 60s from subnet 185.220.101.0/24"
   },
   payments: {
+    expectedTeam: "PAYMENTS",
     service: "billing-service",
     environment: "production",
     statusCode: 502,
@@ -35,6 +40,16 @@ const predefinedIncidents = {
     details: "Gateway provider returned HTTP 504 Gateway Timeout during PIX charge creation"
   }
 };
+
+/**
+ * Retorna um incidente aleatório entre os pré-definidos
+ * @returns {object}
+ */
+function getRandomIncident() {
+  const keys = Object.keys(predefinedIncidents);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return { ...predefinedIncidents[randomKey], key: randomKey };
+}
 
 /**
  * Retorna um incidente pré-definido pelo tipo ou um aleatório
@@ -45,9 +60,7 @@ function getIncidentByType(type) {
   const normalizedType = (type || "").toLowerCase();
 
   if (normalizedType === "random") {
-    const keys = Object.keys(predefinedIncidents);
-    const randomKey = keys[Math.floor(Math.random() * keys.length)];
-    return predefinedIncidents[randomKey];
+    return getRandomIncident();
   }
 
   return predefinedIncidents[normalizedType] || null;
@@ -55,5 +68,6 @@ function getIncidentByType(type) {
 
 module.exports = {
   predefinedIncidents,
-  getIncidentByType
+  getIncidentByType,
+  getRandomIncident
 };
