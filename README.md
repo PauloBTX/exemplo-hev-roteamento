@@ -6,6 +6,14 @@ O Jev é um modelo *"System One"*: em vez de gerar texto conversacional com risc
 
 ---
 
+## 🧭 Fluxo de Decisão
+
+Um incidente entra pelo servidor Express, o **Jev** (via OpenRouter) decide qual time deve recebê-lo e a função `routeIncident()` faz o encaminhamento para o canal operacional correto.
+
+<img src="docs/img/fluxo-decisao.png" alt="Fluxo de decisão do Jev Incident Router" width="900">
+
+---
+
 ## 🚀 Como Executar
 
 ### 1. Instalar as dependências
@@ -119,6 +127,20 @@ Simula incidentes reais de backend para teste rápido no navegador ou terminal:
   curl http://localhost:3000/simulate/random
   ```
 
+**Exemplos de resposta reais:**
+
+| Banco de dados | Backend |
+| --- | --- |
+| <img src="docs/img/simulate-database.png" alt="GET /simulate/database" width="440"> | <img src="docs/img/simulate-backend.png" alt="GET /simulate/backend" width="440"> |
+
+| Infraestrutura | Segurança |
+| --- | --- |
+| <img src="docs/img/simulate-infrastructure.png" alt="GET /simulate/infrastructure" width="440"> | <img src="docs/img/simulate-security.png" alt="GET /simulate/security" width="440"> |
+
+| Pagamentos |
+| --- |
+| <img src="docs/img/simulate-payments.png" alt="GET /simulate/payments" width="440"> |
+
 ---
 
 ### 3. Benchmark de 1000 Requisições e Margem de Erro (`GET /benchmark`)
@@ -137,21 +159,26 @@ Executa um teste em lote de **1000 requisições** contra o Jev sorteando exempl
   npm run benchmark
   ```
 
-**Exemplo de Resposta do Benchmark:**
+**Resultado de uma execução real:**
+
+<img src="docs/img/benchmark.png" alt="GET /benchmark" width="520">
+
+<details>
+<summary>Ver o JSON completo</summary>
 
 ```json
 {
   "totalRequests": 1000,
   "successfulRequests": 1000,
   "failedRequests": 0,
-  "durationSeconds": 14.39,
-  "throughputRps": 69.5,
+  "durationSeconds": 25.07,
+  "throughputRps": 39.89,
   "routesDistribution": {
-    "BACKEND": 207,
-    "DATABASE": 191,
-    "INFRASTRUCTURE": 197,
-    "SECURITY": 195,
-    "PAYMENTS": 210
+    "BACKEND": 199,
+    "DATABASE": 211,
+    "INFRASTRUCTURE": 191,
+    "SECURITY": 173,
+    "PAYMENTS": 226
   },
   "metrics": {
     "correctDecisions": 1000,
@@ -160,14 +187,33 @@ Executa um teste em lote de **1000 requisições** contra o Jev sorteando exempl
     "errorRatePercentage": "0.00%"
   },
   "detailsByCategory": {
-    "BACKEND": { "expectedTotal": 207, "routedToTeam": 207, "correct": 207, "incorrect": 0, "accuracyPercentage": "100.00%" },
-    "DATABASE": { "expectedTotal": 191, "routedToTeam": 191, "correct": 191, "incorrect": 0, "accuracyPercentage": "100.00%" },
-    "INFRASTRUCTURE": { "expectedTotal": 197, "routedToTeam": 197, "correct": 197, "incorrect": 0, "accuracyPercentage": "100.00%" },
-    "SECURITY": { "expectedTotal": 195, "routedToTeam": 195, "correct": 195, "incorrect": 0, "accuracyPercentage": "100.00%" },
-    "PAYMENTS": { "expectedTotal": 210, "routedToTeam": 210, "correct": 210, "incorrect": 0, "accuracyPercentage": "100.00%" }
+    "BACKEND": { "expectedTotal": 199, "routedToTeam": 199, "correct": 199, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "DATABASE": { "expectedTotal": 211, "routedToTeam": 211, "correct": 211, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "INFRASTRUCTURE": { "expectedTotal": 191, "routedToTeam": 191, "correct": 191, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "SECURITY": { "expectedTotal": 173, "routedToTeam": 173, "correct": 173, "incorrect": 0, "accuracyPercentage": "100.00%" },
+    "PAYMENTS": { "expectedTotal": 226, "routedToTeam": 226, "correct": 226, "incorrect": 0, "accuracyPercentage": "100.00%" }
   }
 }
 ```
+
+</details>
+
+---
+
+## 💸 Custo
+
+As 1000 requisições do benchmark custaram **US$ 0,0492** no total, ou seja, cerca de **US$ 0,0000492 por decisão** (aproximadamente US$ 49 a cada milhão de incidentes classificados).
+
+Para comparação, uma **estimativa** de como ficaria a mesma tarefa com um LLM generalista como o Claude Opus 5.5 (US$ 4 por milhão de tokens de entrada e US$ 20 por milhão de saída). Nenhuma chamada ao Opus foi feita; os números abaixo partem de suposições de tamanho de prompt e de resposta.
+
+| Cenário estimado | Tokens por requisição (entrada / saída) | Custo de 1000 requisições | Comparado ao Jev |
+| --- | --- | --- | --- |
+| Jev (medido) | n/d | US$ 0,0492 | 1x |
+| Opus, prompt enxuto | 300 / 40 | US$ 2,00 | ~41x |
+| Opus, prompt com categorias e exemplos | 600 / 80 | US$ 4,00 | ~81x |
+| Opus, modo em lote (50% de desconto) | 300 a 600 / 40 a 80 | US$ 1,00 a US$ 2,00 | ~20x a ~41x |
+
+O valor do Jev foi medido; os do Opus são uma projeção e variam conforme o prompt real e a taxa de erro aceitável para o caso de uso.
 
 ---
 
@@ -182,6 +228,7 @@ Executa um teste em lote de **1000 requisições** contra o Jev sorteando exempl
 ├── README.md                    # Instruções de uso e documentação
 ├── flowchart.html               # 📊 Diagrama interativo de arquitetura gerado com Archify
 ├── flowchart.architecture.json  # Especificação da arquitetura Archify
+├── docs/img/                    # Imagens usadas neste README
 └── src/
     ├── benchmark.js             # Módulo de benchmark (1.000 requisições concorrentes)
     ├── cli-benchmark.js         # Script CLI para rodar o benchmark via terminal
