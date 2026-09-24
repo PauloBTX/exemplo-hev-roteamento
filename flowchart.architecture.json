@@ -11,14 +11,14 @@
       {
         "id": "full-flow",
         "label": "Fluxo Completo de Roteamento",
-        "focus": ["clients", "express_api", "formatter", "openrouter_jev", "router_module", "team_backend", "team_database", "team_infra", "team_security", "team_payments"],
+        "focus": ["clients", "express_api", "openrouter_jev", "router_module", "team_backend", "team_database", "team_infra", "team_security", "team_payments"],
         "note": "Acompanhe desde a ingestão do erro até a decisão probabilística e o envio para as equipes."
       },
       {
         "id": "decision-engine",
         "label": "Motor de Decisão System One",
-        "focus": ["formatter", "openrouter_jev", "router_module"],
-        "note": "Veja a formatação do estado não estruturado e o retorno da escolha tipada e probabilidades."
+        "focus": ["express_api", "openrouter_jev", "router_module"],
+        "note": "Veja o envio do estado do incidente ao TypeSafe Jev e o retorno da escolha tipada e probabilidades."
       },
       {
         "id": "dispatch-teams",
@@ -29,26 +29,24 @@
     ]
   },
   "components": [
-    { "id": "clients", "type": "external", "label": "Incident Sources", "sublabel": "HTTP Clients", "pos": [40, 290], "size": [126, 60] },
-    { "id": "express_api", "type": "backend", "label": "Express Server", "sublabel": "Node.js API", "pos": [220, 290], "size": [126, 60], "tag": ":3000" },
-    { "id": "formatter", "type": "backend", "label": "State Formatter", "sublabel": "formatState()", "pos": [400, 290], "size": [126, 60] },
-    { "id": "openrouter_jev", "type": "cloud", "label": "TypeSafe Jev", "sublabel": "Decisions API", "pos": [580, 290], "size": [136, 60], "tag": "System 1" },
-    { "id": "router_module", "type": "backend", "label": "Incident Router", "sublabel": "routeIncident()", "pos": [770, 290], "size": [126, 60], "tag": "Router" },
-    { "id": "team_backend", "type": "backend", "label": "BACKEND Team", "sublabel": "API, Lógica, Bugs", "pos": [970, 90], "size": [130, 60], "tag": "MS Teams" },
-    { "id": "team_database", "type": "database", "label": "DATABASE Team", "sublabel": "Pool, Timeout, SQL", "pos": [970, 190], "size": [130, 60], "tag": "MS Teams" },
-    { "id": "team_infra", "type": "cloud", "label": "INFRASTRUCTURE", "sublabel": "Pods, Memória, CPU", "pos": [970, 290], "size": [130, 60], "tag": "MS Teams" },
-    { "id": "team_security", "type": "security", "label": "SECURITY Team", "sublabel": "Auth, JWT, Ataques", "pos": [970, 390], "size": [130, 60], "tag": "MS Teams" },
-    { "id": "team_payments", "type": "frontend", "label": "PAYMENTS Team", "sublabel": "Gateway, PIX, Cartão", "pos": [970, 490], "size": [130, 60], "tag": "MS Teams" }
+    { "id": "clients", "type": "external", "label": "Incident Sources", "sublabel": "HTTP Clients", "pos": [50, 290], "size": [126, 60] },
+    { "id": "express_api", "type": "backend", "label": "Express Server", "sublabel": "Node.js API", "pos": [260, 290], "size": [136, 60], "tag": ":3000" },
+    { "id": "openrouter_jev", "type": "cloud", "label": "TypeSafe Jev", "sublabel": "Decisions API", "pos": [510, 290], "size": [146, 60], "tag": "System 1" },
+    { "id": "router_module", "type": "backend", "label": "Incident Router", "sublabel": "routeIncident()", "pos": [760, 290], "size": [136, 60], "tag": "Router" },
+    { "id": "team_backend", "type": "backend", "label": "BACKEND Team", "sublabel": "API, Lógica, Bugs", "pos": [980, 90], "size": [130, 60], "tag": "MS Teams" },
+    { "id": "team_database", "type": "database", "label": "DATABASE Team", "sublabel": "Pool, Timeout, SQL", "pos": [980, 190], "size": [130, 60], "tag": "MS Teams" },
+    { "id": "team_infra", "type": "cloud", "label": "INFRASTRUCTURE", "sublabel": "Pods, Memória, CPU", "pos": [980, 290], "size": [130, 60], "tag": "MS Teams" },
+    { "id": "team_security", "type": "security", "label": "SECURITY Team", "sublabel": "Auth, JWT, Ataques", "pos": [980, 390], "size": [130, 60], "tag": "MS Teams" },
+    { "id": "team_payments", "type": "frontend", "label": "PAYMENTS Team", "sublabel": "Gateway, PIX, Cartão", "pos": [980, 490], "size": [130, 60], "tag": "MS Teams" }
   ],
   "boundaries": [
-    { "kind": "region", "label": "Aplicação Local (Node.js Express)", "wraps": ["express_api", "formatter", "router_module"], "pad": 16 },
+    { "kind": "region", "label": "Aplicação Local (Node.js Express)", "wraps": ["express_api", "router_module"], "pad": 16 },
     { "kind": "security-group", "label": "OpenRouter AI Cloud", "wraps": ["openrouter_jev"], "pad": 16 },
     { "kind": "region", "label": "Canais Operacionais (Microsoft Teams)", "wraps": ["team_backend", "team_database", "team_infra", "team_security", "team_payments"], "pad": 16 }
   ],
   "connections": [
     { "from": "clients", "to": "express_api", "label": "HTTP", "variant": "emphasis" },
-    { "from": "express_api", "to": "formatter", "label": "JSON" },
-    { "from": "formatter", "to": "openrouter_jev", "label": "state", "variant": "security" },
+    { "from": "express_api", "to": "openrouter_jev", "label": "state", "variant": "security" },
     { "from": "openrouter_jev", "to": "router_module", "label": "decision", "variant": "emphasis" },
     { "from": "router_module", "to": "team_backend", "variant": "emphasis", "route": "orthogonal-h" },
     { "from": "router_module", "to": "team_database", "variant": "emphasis", "route": "orthogonal-h" },
