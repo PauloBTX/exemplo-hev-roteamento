@@ -1,0 +1,23 @@
+{
+  "name": "jev-incident-router",
+  "version": "1.0.0",
+  "description": "Classificação e roteamento automático de incidentes de backend usando TypeSafe Jev via OpenRouter Decisions API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "jev",
+    "typesafeai",
+    "openrouter",
+    "routing",
+    "incident-management"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}
